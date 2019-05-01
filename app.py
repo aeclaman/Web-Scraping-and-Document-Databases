@@ -5,39 +5,15 @@ import scrape_mars
 
 app = Flask(__name__)
 
-# Create connection variable
-#conn = 'mongodb://localhost:27017'
-
-# Pass connection to the pymongo instance.
-#client = pymongo.MongoClient(conn)
-
-# Connect to a database. Will create one if not already available.
-#db = client.mars_db
-
-# Use flask_pymongo to set up mongo connection
-#app.config["MONGO_URI"] = "mongodb://localhost:27017/mars_db"
-#mongo = PyMongo(app)
-
 # Use PyMongo to establish Mongo connection
 mongo = PyMongo(app, uri="mongodb://localhost:27017/mars_db")
 
-# Or set inline
-# mongo = PyMongo(app, uri="mongodb://localhost:27017/mars_db")
-
-
 @app.route("/")
 def index():
-    # Here, db.students refers to the collection 'classroom '
+    # get scraped dictionary from mongo db.mars_db and send to html
     mars_dict = mongo.db.mars_data.find_one()
-    # Get html string to remove first and last quotes around html and pass directly to html
-    #value = mars_dict.get('mars_facts')
-    #facthtml = value[1:-1]
-
-    # Iterate through each student in the collection
-    for x in mars_dict:
-        print(x)
   
-    return render_template("index.html", dict=mars_dict) #, facthtml=facthtml)
+    return render_template("index.html", dict=mars_dict)
 
 # Route that will trigger the scrape function
 @app.route("/scrape")

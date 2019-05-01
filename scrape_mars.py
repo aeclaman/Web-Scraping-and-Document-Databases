@@ -2,7 +2,6 @@ import os
 import time
 import requests
 import pandas as pd
-#import pymongo
 
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
@@ -15,21 +14,6 @@ def init_browser():
     # @NOTE: Replace the path with your actual path to the chromedriver
     executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
     return Browser("chrome", **executable_path, headless=False)
-
-#def store_data(dictionary):
-#    conn = 'mongodb://localhost:27017'
-
-    # Connect to mongo db and collection
-#    client = pymongo.MongoClient(conn)
-
-    # Connect to a database. Will create one if not already available.
-#    db = client.mars_db
-
-    # Drops collection if available to remove duplicates
-#    db.mars_data.drop()
-
-    # Creates a collection in the database and inserts two documents
-#    db.mars_data.insert_one(dictionary)
 
 
 def scrape():
@@ -51,6 +35,7 @@ def scrape():
 
     mars_dict["news_title"] = news_title
     mars_dict["news_p"] = news_p
+
 
     #Featured Image scraping
     featured_image_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
@@ -80,7 +65,8 @@ def scrape():
     #Add scraped data to dictionary
     mars_dict["featured_image_url"] = featured_image_url
 
-    ##Mars Weather
+
+    ##Mars Weather scraping
     weather_url = 'https://twitter.com/marswxreport?lang=en'
     response = requests.get(weather_url, timeout=5)
     soup = bs(response.text, 'html.parser')
@@ -88,7 +74,8 @@ def scrape():
     mars_weather = soup.find('p', class_="tweet-text").text
     mars_dict["mars_weather"] = mars_weather
 
-    ##Mars Hemispheres
+
+    ##Mars Hemispheres scraping
     #browser = init_browser()
     hemisphere_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
     browser.visit(hemisphere_url)
@@ -103,7 +90,6 @@ def scrape():
         item_url = item.find('h3').text
     
         try:
-            #browser.find_element_by_link_text(item_url).click()
             browser.find_link_by_partial_text(item_url)[0].click()
             time.sleep(10)
         except ElementDoesNotExist:
@@ -123,7 +109,8 @@ def scrape():
 
     mars_dict["hemisphere_list"] = hemisphere_image_urls
 
-    ##Mars Facts Table 
+
+    ##Mars Facts Table scraping
     facts_url = "https://space-facts.com/mars/"
     tables = pd.read_html(facts_url)
     df = tables[0]
@@ -135,11 +122,10 @@ def scrape():
     
     mars_dict["mars_facts"] = html_table
 
+
     # Close the browser after scraping
     browser.quit()
 
     return mars_dict
 
-#scraped_data = scrape()
-#store_data(scraped_data)
 

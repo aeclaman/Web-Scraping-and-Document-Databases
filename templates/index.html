@@ -7,7 +7,6 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Mission to Mars!</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -27,12 +26,13 @@
         <h2>Featured Mars Image</h2>
         <img src={{ dict.featured_image_url }}  width="600" height="600">
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3"><span class="border">
         <h4>Current Weather on Mars</h4>
-        <p> {{ dict.mars_weather[0:-30] }} </p>
+        <p> {{ dict.mars_weather[0:-30] }} </p></span>
         <br>
         <h4>Mars Facts:</h4>
-        {{ dict.mars_facts }}
+        {{ dict.mars_facts|safe }}
+        
       </div>
       <div class="col-md-1"></div>
     </div>
