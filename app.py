@@ -6,13 +6,19 @@ import scrape_mars
 app = Flask(__name__)
 
 # Use PyMongo to establish Mongo connection
-mongo = PyMongo(app, uri="mongodb://localhost:27017/mars_db")
+mongo = PyMongo(app, uri="mongodb://localhost:27017/venus_db")
 
 @app.route("/")
 def index():
+     
+    if (mongo.db.mars_data.count() == 0):
+        # scrape the data for inital load of the mongo db
+        mars_data = scrape_mars.scrape()
+        mongo.db.mars_data.update({}, mars_data, upsert=True)
+    
     # get scraped dictionary from mongo db.mars_db and send to html
     mars_dict = mongo.db.mars_data.find_one()
-  
+
     return render_template("index.html", dict=mars_dict)
 
 # Route that will trigger the scrape function
