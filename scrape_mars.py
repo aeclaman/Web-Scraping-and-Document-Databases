@@ -113,7 +113,7 @@ def scrape():
     ##Mars Facts Table scraping
     facts_url = "https://space-facts.com/mars/"
     tables = pd.read_html(facts_url)
-    df = tables[0]
+    df = tables[1]
     df.columns = ['Description', 'Value']
     df.set_index('Description', inplace=True)
     df.head()
