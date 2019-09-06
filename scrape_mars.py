@@ -13,7 +13,7 @@ def init_browser():
     print(os.environ)
     # @NOTE: Replace the path with your actual path to the chromedriver
     if os.getenv('MONGODB_URI'):
-        executable_path = {"executable_path": os.getenv('GOOGLE_CHROME_BIN')}
+        executable_path = {"executable_path": os.getenv('GOOGLE_CHROME_SHIM')}
     else:
         executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
     return Browser("chrome", **executable_path, headless=False)
