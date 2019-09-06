@@ -4,11 +4,10 @@ import requests
 import pandas as pd
 
 from bs4 import BeautifulSoup as bs
-from selenium import webdriver
+# from selenium import webdriver
 
 from splinter import Browser
 from splinter.exceptions import ElementDoesNotExist
-
 
 def init_browser():
     # @NOTE: Replace the path with your actual path to the chromedriver
