@@ -10,8 +10,12 @@ from splinter import Browser
 from splinter.exceptions import ElementDoesNotExist
 
 def init_browser():
+    print(os.environ)
     # @NOTE: Replace the path with your actual path to the chromedriver
-    executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
+    if os.getenv('MONGODB_URI'):
+        executable_path = {"executable_path": "/app/.apt/usr/bin/google-chrome"}
+    else:
+        executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
     return Browser("chrome", **executable_path, headless=False)
 
 
