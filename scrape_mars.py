@@ -126,8 +126,9 @@ def scrape():
         hemisphere_dict["img_url"] = "https://astrogeology.usgs.gov" + wide_image
         hemisphere_dict["title"] = title
         hemisphere_image_urls.append(hemisphere_dict)
+        time.sleep(1)
     
-        print(hemisphere_dict)
+        print(item_url)
         #browser.back()
 
     mars_dict["hemisphere_list"] = hemisphere_image_urls

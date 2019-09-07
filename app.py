@@ -31,6 +31,7 @@ def scrape():
     # Run the scrape function
     mars_data = scrape_mars.scrape()
 
+    print("Scrape complete, ready to update MongoDB")
     # Update the Mongo database using update and upsert=True
     mongo.db.mars_data.update({}, mars_data, upsert=True)
 
