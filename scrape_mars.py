@@ -35,10 +35,13 @@ def scrape():
     mars_news_url = 'https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest'
     
     # Retrieve page with the requests module
-    response = requests.get(mars_news_url, timeout=15)
+    ##response = requests.get(mars_news_url, timeout=5)
+    browser.visit(mars_news_url)
+    html = browser.html
 
     # Create BeautifulSoup object; parse with 'html.parser'
-    soup = bs(response.text, 'html.parser')
+    ##soup = bs(response.text, 'html.parser')
+    soup = bs(html, 'html.parser')
 
     # Grab first title and teaser
     news_title = soup.find('div', class_='content_title').text.strip()
