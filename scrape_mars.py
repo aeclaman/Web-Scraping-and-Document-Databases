@@ -28,13 +28,14 @@ def init_browser():
 
 def scrape():
     browser = init_browser()
+    print('browser is ready')
     mars_dict = {}
 
     #Mars News scraping
     mars_news_url = 'https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest'
     
     # Retrieve page with the requests module
-    response = requests.get(mars_news_url, timeout=5)
+    response = requests.get(mars_news_url, timeout=15)
 
     # Create BeautifulSoup object; parse with 'html.parser'
     soup = bs(response.text, 'html.parser')
