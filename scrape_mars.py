@@ -109,7 +109,7 @@ def scrape():
     
         try:
             browser.find_link_by_partial_text(item_url)[0].click()
-            time.sleep(10)
+            time.sleep(5)
         except ElementDoesNotExist:
             print("Scraping Complete")
         
@@ -123,6 +123,7 @@ def scrape():
         hemisphere_dict["title"] = title
         hemisphere_image_urls.append(hemisphere_dict)
     
+        print("Hemesphere iteration returning")
         browser.back()
 
     mars_dict["hemisphere_list"] = hemisphere_image_urls
