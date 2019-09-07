@@ -37,12 +37,12 @@ def scrape():
     # Retrieve page with the requests module
     ##response = requests.get(mars_news_url, timeout=5)
     browser.visit(mars_news_url)
+    time.sleep(3)
     html = browser.html
 
     # Create BeautifulSoup object; parse with 'html.parser'
     ##soup = bs(response.text, 'html.parser')
     soup = bs(html, 'html.parser')
-    time.sleep(5)
 
     # Grab first title and teaser
     news_title = soup.find('div', class_='content_title').text.strip()
@@ -56,18 +56,20 @@ def scrape():
     #Featured Image scraping
     featured_image_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
     browser.visit(featured_image_url)
+    time.sleep(3)
 
     html = browser.html
     soup = bs(html, "html.parser")
 
     #Click full image button to get image file
     browser.click_link_by_partial_text('FULL IMAGE')
+    time.sleep(3)
     html = browser.html
     soup = bs(html, 'html.parser')
-    time.sleep(5)
 
     #Click more info button to get full image file
     browser.click_link_by_partial_text('more info')
+    time.sleep(3)
     html = browser.html
     soup = bs(html, 'html.parser')
 
@@ -85,8 +87,11 @@ def scrape():
 
     ##Mars Weather scraping
     weather_url = 'https://twitter.com/marswxreport?lang=en'
-    response = requests.get(weather_url, timeout=5)
-    soup = bs(response.text, 'html.parser')
+    #response = requests.get(weather_url, timeout=5)
+    browser.visit(weather_url)
+    time.sleep(3)
+    html = browser.html
+    soup = bs(html, 'html.parser')
 
     mars_weather = soup.find('p', class_="tweet-text").text
     mars_dict["mars_weather"] = mars_weather
@@ -109,7 +114,7 @@ def scrape():
     #browser = init_browser()
     hemisphere_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
     browser.visit(hemisphere_url)
-
+    time.sleep(3)
     html = browser.html
     soup = bs(html, 'html.parser')
 
@@ -122,7 +127,6 @@ def scrape():
     
         try:
             browser.find_link_by_partial_text(item_url)[0].click()
-            time.sleep(4)
         except ElementDoesNotExist:
             print("Scraping Complete")
         
@@ -135,7 +139,7 @@ def scrape():
         hemisphere_dict["img_url"] = "https://astrogeology.usgs.gov" + wide_image
         hemisphere_dict["title"] = title
         hemisphere_image_urls.append(hemisphere_dict)
-        time.sleep(1)
+        time.sleep(3)
     
         print(item_url)
         #browser.back()
