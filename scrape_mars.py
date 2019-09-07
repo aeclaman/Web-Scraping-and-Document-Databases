@@ -42,6 +42,7 @@ def scrape():
     # Create BeautifulSoup object; parse with 'html.parser'
     ##soup = bs(response.text, 'html.parser')
     soup = bs(html, 'html.parser')
+    time.sleep(5)
 
     # Grab first title and teaser
     news_title = soup.find('div', class_='content_title').text.strip()
@@ -50,6 +51,7 @@ def scrape():
     mars_dict["news_title"] = news_title
     mars_dict["news_p"] = news_p
 
+    print('News Title: ' + news_title)
 
     #Featured Image scraping
     featured_image_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
@@ -78,6 +80,7 @@ def scrape():
 
     #Add scraped data to dictionary
     mars_dict["featured_image_url"] = featured_image_url
+    print("Featured image done")
 
 
     ##Mars Weather scraping
@@ -87,6 +90,7 @@ def scrape():
 
     mars_weather = soup.find('p', class_="tweet-text").text
     mars_dict["mars_weather"] = mars_weather
+    print("Weather done")
 
 
     ##Mars Hemispheres scraping
@@ -122,6 +126,7 @@ def scrape():
         browser.back()
 
     mars_dict["hemisphere_list"] = hemisphere_image_urls
+    print("Hemispheres done")
 
 
     ##Mars Facts Table scraping
@@ -135,6 +140,7 @@ def scrape():
     html_table = html_table.replace('\n', '')
     
     mars_dict["mars_facts"] = html_table
+    print("Facts done")
 
 
     # Close the browser after scraping
