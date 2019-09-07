@@ -92,6 +92,18 @@ def scrape():
     mars_dict["mars_weather"] = mars_weather
     print("Weather done")
 
+    ##Mars Facts Table scraping
+    facts_url = "https://space-facts.com/mars/"
+    tables = pd.read_html(facts_url)
+    df = tables[1]
+    df.columns = ['Description', 'Value']
+    df.set_index('Description', inplace=True)
+    df.head()
+    html_table = df.to_html()
+    html_table = html_table.replace('\n', '')
+    
+    mars_dict["mars_facts"] = html_table
+    print("Facts done")
 
     ##Mars Hemispheres scraping
     #browser = init_browser()
@@ -130,21 +142,6 @@ def scrape():
 
     mars_dict["hemisphere_list"] = hemisphere_image_urls
     print("Hemispheres done")
-
-
-    ##Mars Facts Table scraping
-    facts_url = "https://space-facts.com/mars/"
-    tables = pd.read_html(facts_url)
-    df = tables[1]
-    df.columns = ['Description', 'Value']
-    df.set_index('Description', inplace=True)
-    df.head()
-    html_table = df.to_html()
-    html_table = html_table.replace('\n', '')
-    
-    mars_dict["mars_facts"] = html_table
-    print("Facts done")
-
 
     # Close the browser after scraping
     browser.quit()
