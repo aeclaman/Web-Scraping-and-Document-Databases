@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 
 from bs4 import BeautifulSoup as bs
-# from selenium import webdriver
+from selenium import webdriver
 
 from splinter import Browser
 from splinter.exceptions import ElementDoesNotExist
@@ -13,10 +13,17 @@ def init_browser():
     print(os.environ)
     # @NOTE: Replace the path with your actual path to the chromedriver
     if os.getenv('MONGODB_URI'):
-        executable_path = {"executable_path": os.getenv('GOOGLE_CHROME_SHIM')}
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.binary_location = os.getenv('GOOGLE_CHROME_SHIM')
+        chrome_options.add_argument('--disable-gpu')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('headless')
+        # executable_path = {"executable_path": os.getenv('GOOGLE_CHROME_SHIM')}
+        executable_path = {"executable_path": "/app/.chromedriver/bin/chromedriver"}
+        return Browser("chrome", **executable_path, options=chrome_options)
     else:
         executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
-    return Browser("chrome", **executable_path, headless=False)
+        return Browser("chrome", **executable_path, headless=False)
 
 
 def scrape():
