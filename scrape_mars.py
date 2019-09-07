@@ -105,11 +105,12 @@ def scrape():
     hemisphere_image_urls = []
 
     for item in items:
+        print("Hemesphere iteration")
         item_url = item.find('h3').text
     
         try:
             browser.find_link_by_partial_text(item_url)[0].click()
-            time.sleep(5)
+            time.sleep(3)
         except ElementDoesNotExist:
             print("Scraping Complete")
         
@@ -123,8 +124,9 @@ def scrape():
         hemisphere_dict["title"] = title
         hemisphere_image_urls.append(hemisphere_dict)
     
-        print("Hemesphere iteration returning")
+        print(hemisphere_dict)
         browser.back()
+        time.sleep(3)
 
     mars_dict["hemisphere_list"] = hemisphere_image_urls
     print("Hemispheres done")
