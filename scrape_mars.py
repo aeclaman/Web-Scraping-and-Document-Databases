@@ -97,7 +97,6 @@ def scrape():
     #browser = init_browser()
     hemisphere_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
     browser.visit(hemisphere_url)
-    time.sleep(1)
 
     html = browser.html
     soup = bs(html, 'html.parser')
@@ -118,9 +117,7 @@ def scrape():
         html = browser.html
         soup = bs(html, 'html.parser')
         wide_image = soup.find('img', class_='wide-image')['src']
-        time.sleep(1)
         title = soup.find('h2', class_='title').text
-        time.sleep(1)
     
         hemisphere_dict = {}
         hemisphere_dict["img_url"] = "https://astrogeology.usgs.gov" + wide_image
