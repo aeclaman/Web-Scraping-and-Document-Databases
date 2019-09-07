@@ -126,6 +126,7 @@ def scrape():
     
         print(hemisphere_dict)
         #browser.back()
+        time.sleep(3)
 
     mars_dict["hemisphere_list"] = hemisphere_image_urls
     print("Hemispheres done")
