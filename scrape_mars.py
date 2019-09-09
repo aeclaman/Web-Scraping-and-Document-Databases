@@ -120,9 +120,9 @@ def scrape():
 
     items = soup.find_all('div', class_='item')
     hemisphere_image_urls = []
-
-    print("how many items:" + str(len(items)))
+    
     for item in items:
+        #print("item:"+ str(item))
         print("Hemesphere iteration")
         item_url = item.find('h3').text
     
@@ -143,7 +143,7 @@ def scrape():
         time.sleep(3)
     
         print(item_url)
-        #browser.back()
+        browser.back()
 
     mars_dict["hemisphere_list"] = hemisphere_image_urls
     print("Hemispheres done")
