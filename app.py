@@ -37,7 +37,7 @@ def scrape():
 
     print("MongoDB updated; rerounting to home screen...")
     # Redirect back to home page
-    return redirect("/", code=302)
+    return redirect("/")
 
 
 

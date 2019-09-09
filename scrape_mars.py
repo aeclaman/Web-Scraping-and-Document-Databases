@@ -123,7 +123,7 @@ def scrape():
     
     for item in items:
         #print("item:"+ str(item))
-        print("Hemesphere iteration")
+        print("Hemisphere iteration")
         item_url = item.find('h3').text
     
         try:
