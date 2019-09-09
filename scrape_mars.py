@@ -121,6 +121,7 @@ def scrape():
     items = soup.find_all('div', class_='item')
     hemisphere_image_urls = []
 
+    print("how many items:" + len(items))
     for item in items:
         print("Hemesphere iteration")
         item_url = item.find('h3').text
