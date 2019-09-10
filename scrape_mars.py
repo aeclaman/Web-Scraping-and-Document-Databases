@@ -18,7 +18,6 @@ def init_browser():
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('headless')
-        # executable_path = {"executable_path": os.getenv('GOOGLE_CHROME_SHIM')}
         executable_path = {"executable_path": "/app/.chromedriver/bin/chromedriver"}
         return Browser("chrome", **executable_path, options=chrome_options)
     else:

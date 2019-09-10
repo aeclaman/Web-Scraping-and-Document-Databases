@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect
 from flask_pymongo import PyMongo
 import pymongo
 import os
+import time
 import scrape_mars
 
 app = Flask(__name__)
@@ -30,12 +31,13 @@ def scrape():
 
     # Run the scrape function
     mars_data = scrape_mars.scrape()
+    time.sleep(10)
 
     print("Scrape complete, ready to update MongoDB")
     # Update the Mongo database using update and upsert=True
     mongo.db.mars_data.update({}, mars_data, upsert=True)
 
-    print("MongoDB updated; rerounting to home screen...")
+    print("MongoDB updated; rerouting to home screen...")
     # Redirect back to home page
     return redirect("/")
 
