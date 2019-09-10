@@ -10,6 +10,7 @@ from splinter import Browser
 from splinter.exceptions import ElementDoesNotExist
 
 def init_browser():
+    print("**********Environmental Variables:")
     print(os.environ)
     # @NOTE: Replace the path with your actual path to the chromedriver
     if os.getenv('MONGODB_URI'):
@@ -28,6 +29,7 @@ def init_browser():
 def scrape():
     browser = init_browser()
     print('browser is ready')
+    #define dictionary to hold scraped data
     mars_dict = {}
 
     #Mars News scraping
@@ -49,8 +51,6 @@ def scrape():
 
     mars_dict["news_title"] = news_title
     mars_dict["news_p"] = news_p
-
-    print('News Title: ' + news_title)
 
     #Featured Image scraping
     featured_image_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
@@ -81,8 +81,6 @@ def scrape():
 
     #Add scraped data to dictionary
     mars_dict["featured_image_url"] = featured_image_url
-    print("Featured image done")
-
 
     ##Mars Weather scraping
     weather_url = 'https://twitter.com/marswxreport?lang=en'
@@ -94,7 +92,6 @@ def scrape():
 
     mars_weather = soup.find('p', class_="tweet-text").text
     mars_dict["mars_weather"] = mars_weather
-    print("Weather done")
 
     ##Mars Facts Table scraping
     facts_url = "https://space-facts.com/mars/"
@@ -107,45 +104,53 @@ def scrape():
     html_table = html_table.replace('\n', '')
     
     mars_dict["mars_facts"] = html_table
-    print("Facts done")
 
     ##Mars Hemispheres scraping
-    #browser = init_browser()
-    hemisphere_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
-    browser.visit(hemisphere_url)
-    time.sleep(3)
-    html = browser.html
-    soup = bs(html, 'html.parser')
-
-    items = soup.find_all('div', class_='item')
     hemisphere_image_urls = []
-    
-    for item in items:
-        #print("item:"+ str(item))
-        print("Hemisphere iteration")
-        item_url = item.find('h3').text
-    
-        try:
-            browser.find_link_by_partial_text(item_url)[0].click()
-        except ElementDoesNotExist:
-            print("Scraping Complete")
-        
+
+    if os.getenv('MONGODB_URI'):
+        # if running on heroku, use static images of mars hemisphere data so as not to time out the web server. Images don't change anyway. Scraping them each time is not necessary.
+        static_hemisphere_dict = {'Cerberus Hemisphere Enhanced':'https://astrogeology.usgs.gov/cache/images/cfa62af2557222a02478f1fcd781d445_cerberus_enhanced.tif_full.jpg',
+                                  'Schiaparelli Hemisphere Enhanced':'https://astrogeology.usgs.gov/cache/images/3cdd1cbf5e0813bba925c9030d13b62e_schiaparelli_enhanced.tif_full.jpg',
+                                  'Syrtis Major Hemisphere Enhanced': 'https://astrogeology.usgs.gov//cache/images/ae209b4e408bb6c3e67b6af38168cf28_syrtis_major_enhanced.tif_full.jpg',
+                                  'Valles Marineris Hemisphere Enhanced': 'https://astrogeology.usgs.gov/cache/images/7cf2da4bf549ed01c17f206327be4db7_valles_marineris_enhanced.tif_full.jpg'}
+        for k, v in static_hemisphere_dict.items():
+            hemisphere_dict = {}
+            hemisphere_dict["img_url"] = v
+            hemisphere_dict["title"] = k
+            hemisphere_image_urls.append(hemisphere_dict)
+    else:
+        hemisphere_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
+        browser.visit(hemisphere_url)
+        time.sleep(3)
         html = browser.html
         soup = bs(html, 'html.parser')
-        wide_image = soup.find('img', class_='wide-image')['src']
-        title = soup.find('h2', class_='title').text
+
+        items = soup.find_all('div', class_='item')
+        # hemisphere_image_urls = []
     
-        hemisphere_dict = {}
-        hemisphere_dict["img_url"] = "https://astrogeology.usgs.gov" + wide_image
-        hemisphere_dict["title"] = title
-        hemisphere_image_urls.append(hemisphere_dict)
-        time.sleep(3)
+        for item in items:
+            item_url = item.find('h3').text
     
-        print(item_url)
-        browser.back()
+            try:
+                browser.find_link_by_partial_text(item_url)[0].click()
+            except ElementDoesNotExist:
+                print("Scraping Complete")
+        
+            html = browser.html
+            soup = bs(html, 'html.parser')
+            wide_image = soup.find('img', class_='wide-image')['src']
+            title = soup.find('h2', class_='title').text
+    
+            hemisphere_dict = {}
+            hemisphere_dict["img_url"] = "https://astrogeology.usgs.gov" + wide_image
+            hemisphere_dict["title"] = title
+            hemisphere_image_urls.append(hemisphere_dict)
+            time.sleep(3)
+    
+            browser.back()
 
     mars_dict["hemisphere_list"] = hemisphere_image_urls
-    print("Hemispheres done")
 
     # Close the browser after scraping
     browser.quit()
