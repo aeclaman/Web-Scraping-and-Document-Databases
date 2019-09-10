@@ -81,6 +81,7 @@ def scrape():
 
     #Add scraped data to dictionary
     mars_dict["featured_image_url"] = featured_image_url
+    print("featured image complete")
 
     ##Mars Weather scraping
     weather_url = 'https://twitter.com/marswxreport?lang=en'
@@ -92,6 +93,7 @@ def scrape():
 
     mars_weather = soup.find('p', class_="tweet-text").text
     mars_dict["mars_weather"] = mars_weather
+    print("weather complete")
 
     ##Mars Facts Table scraping
     facts_url = "https://space-facts.com/mars/"
@@ -104,6 +106,7 @@ def scrape():
     html_table = html_table.replace('\n', '')
     
     mars_dict["mars_facts"] = html_table
+    print("Facts complete")
 
     ##Mars Hemispheres scraping
     hemisphere_image_urls = []
@@ -151,6 +154,7 @@ def scrape():
             browser.back()
 
     mars_dict["hemisphere_list"] = hemisphere_image_urls
+    print("hemispheres complete")
 
     # Close the browser after scraping
     browser.quit()
