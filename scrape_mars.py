@@ -158,6 +158,7 @@ def scrape():
 
     # Close the browser after scraping
     browser.quit()
+    print("quitting browser")
 
     return mars_dict
 

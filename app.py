@@ -29,10 +29,10 @@ def index():
 @app.route("/scrape")
 def scrape():
 
+    print("ready to scrape")
     # Run the scrape function
     mars_data = scrape_mars.scrape()
-    time.sleep(10)
-
+    
     print("Scrape complete, ready to update MongoDB")
     # Update the Mongo database using update and upsert=True
     mongo.db.mars_data.update({}, mars_data, upsert=True)
