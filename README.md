@@ -1,10 +1,10 @@
 # Web-Scraping-and-Document-Databases
-Homework 12 for Data Analytics Bootcamp - webscraping using flask, mongo, pandas
+This project does webscraping using Flask, PyMongo, Pandas and BeautifulSoup. The html will render with existing database data. If the database is empty or nonexistant, the app will do an initial web scrape to load the database. The user can also choose to scrape for new data at the push of a button at any time.
 
-run mongod
+The app can be downloaded and run locally by doing the following from terminal windows:  
+  run mongod  
+  run python app.py 
 
-run python app.py
-
-This launches the Mission to Mars website. You can scrape new data by pushing the Scrape New Data botton.
+The app was also deployed to heroku and can be run at https://aeclaman-web-scraping.herokuapp.com/
 
 Thanks!
