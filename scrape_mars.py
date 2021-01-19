@@ -2,8 +2,9 @@ import os
 import time
 import requests
 import pandas as pd
+from datetime import datetime
 
-from bs4 import BeautifulSoup as bs
+from bs4 import BeautifulSoup as bs, Tag
 from selenium import webdriver
 
 from splinter import Browser
@@ -45,43 +46,28 @@ def scrape():
     ##soup = bs(response.text, 'html.parser')
     soup = bs(html, 'html.parser')
 
-    # Grab first title and teaser
-    news_title = soup.find('div', class_='content_title').text.strip()
-    news_p = soup.find('div', class_='rollover_description_inner').text.strip()
-
-    mars_dict["news_title"] = news_title
-    mars_dict["news_p"] = news_p
-
-    #Featured Image scraping
-    featured_image_url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
-    browser.visit(featured_image_url)
-    time.sleep(3)
-
-    html = browser.html
-    soup = bs(html, "html.parser")
-
-    #Click full image button to get image file
-    browser.click_link_by_partial_text('FULL IMAGE')
-    time.sleep(3)
-    html = browser.html
-    soup = bs(html, 'html.parser')
-
-    #Click more info button to get full image file
-    browser.click_link_by_partial_text('more info')
-    time.sleep(3)
-    html = browser.html
-    soup = bs(html, 'html.parser')
-
-    img = soup.find('figure', class_='lede')
-
-    link = img.find('a')
-    href = link['href']
-
-    featured_image_url = 'https://www.jpl.nasa.gov'+ href
+    # find the list of news articles
+    section = soup.find('div', class_='grid_layout').parent
+    # get the unordered list tag of the articles list
+    news_list = section.find_next('ul').find_all('li')
+    for item in news_list:
+        if isinstance(item, Tag): 
+            # Grab first image
+            image_src = item.find('div', class_='list_image')
+            link = image_src.find('img')
+            href = link['src']
+            # Grab first title and teaser
+            news_title = item.find('div', class_='content_title').text.strip()
+            news_p = item.find('div', class_="article_teaser_body").text.strip()
+            # append href with prefix
+            featured_image_url = 'https://mars.nasa.gov'+ href
+            break
 
     #Add scraped data to dictionary
+    mars_dict["news_title"] = news_title
+    mars_dict["news_p"] = news_p
     mars_dict["featured_image_url"] = featured_image_url
-    print("featured image complete")
+    print("Featured image, headline and teaser complete")
 
     ##Mars Weather scraping
     weather_url = 'https://twitter.com/marswxreport?lang=en'
@@ -91,14 +77,15 @@ def scrape():
     html = browser.html
     soup = bs(html, 'html.parser')
 
-    mars_weather = soup.find('p', class_="tweet-text").text
+    mars_weather = soup.find('div', attrs={"data-testid":"tweet"}).text
+    #mars_weather = soup.find('div', "data-testid_="tweet").text
     mars_dict["mars_weather"] = mars_weather
-    print("weather complete")
+    print("Weather complete")
 
     ##Mars Facts Table scraping
     facts_url = "https://space-facts.com/mars/"
     tables = pd.read_html(facts_url)
-    df = tables[1]
+    df = tables[0]
     df.columns = ['Description', 'Value']
     df.set_index('Description', inplace=True)
     df.head()
@@ -113,10 +100,10 @@ def scrape():
 
     if os.getenv('MONGODB_URI'):
         # if running on heroku, use static images of mars hemisphere data so as not to time out the web server. Images don't change anyway. Scraping them each time is not necessary.
-        static_hemisphere_dict = {'Cerberus Hemisphere Enhanced':'https://astrogeology.usgs.gov/cache/images/cfa62af2557222a02478f1fcd781d445_cerberus_enhanced.tif_full.jpg',
-                                  'Schiaparelli Hemisphere Enhanced':'https://astrogeology.usgs.gov/cache/images/3cdd1cbf5e0813bba925c9030d13b62e_schiaparelli_enhanced.tif_full.jpg',
-                                  'Syrtis Major Hemisphere Enhanced': 'https://astrogeology.usgs.gov//cache/images/ae209b4e408bb6c3e67b6af38168cf28_syrtis_major_enhanced.tif_full.jpg',
-                                  'Valles Marineris Hemisphere Enhanced': 'https://astrogeology.usgs.gov/cache/images/7cf2da4bf549ed01c17f206327be4db7_valles_marineris_enhanced.tif_full.jpg'}
+        static_hemisphere_dict = {'Cerberus Hemisphere Enhanced':'https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/valles_marineris_enhanced.tif/full.jpg',
+                                  'Schiaparelli Hemisphere Enhanced':'https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/schiaparelli_enhanced.tif/full.jpg',
+                                  'Syrtis Major Hemisphere Enhanced': 'https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/syrtis_major_enhanced.tif/full.jpg',
+                                  'Valles Marineris Hemisphere Enhanced': 'https://astropedia.astrogeology.usgs.gov/download/Mars/Viking/valles_marineris_enhanced.tif/full.jpg'}
         for k, v in static_hemisphere_dict.items():
             hemisphere_dict = {}
             hemisphere_dict["img_url"] = v
@@ -130,10 +117,10 @@ def scrape():
         soup = bs(html, 'html.parser')
 
         items = soup.find_all('div', class_='item')
-        # hemisphere_image_urls = []
     
         for item in items:
             item_url = item.find('h3').text
+            title = item_url
     
             try:
                 browser.find_link_by_partial_text(item_url)[0].click()
@@ -143,7 +130,7 @@ def scrape():
             html = browser.html
             soup = bs(html, 'html.parser')
             wide_image = soup.find('img', class_='wide-image')['src']
-            title = soup.find('h2', class_='title').text
+            #title = soup.find('h2', class_='title').text
     
             hemisphere_dict = {}
             hemisphere_dict["img_url"] = "https://astrogeology.usgs.gov" + wide_image
@@ -158,7 +145,10 @@ def scrape():
 
     # Close the browser after scraping
     browser.quit()
-    print("quitting browser")
+    print("Quitting browser")
+    
+    # add a timestamp to collected data
+    mars_dict["data_timestamp"] = datetime.now()
 
     return mars_dict
 
